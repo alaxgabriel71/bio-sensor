@@ -4,6 +4,8 @@
 #define dht_pin 3 // defines digital pin 3 as DHT sensor pin
 #define temperature_limit 50 // temperature limit to start the alert message
 
+String comdata = "";
+
 dht dht11; // create a object from DHT sensors library
 
 int led_alert = 13; // the alert LED defined at pin 13
@@ -66,4 +68,13 @@ void printToLcd(int temp, int humid) {
   lcd.print(" %");
   delay(2000);
 
+}
+
+void serialEvent(){
+  comdata="";
+  while(Serial.available())
+  {
+    comdata += char(Serial.read());
+    delay(2);
+  }
 }
