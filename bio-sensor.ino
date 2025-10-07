@@ -1,10 +1,17 @@
 #include <dht.h>
 #include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
 
 #define dht_pin 3 // defines digital pin 3 as DHT sensor pin
 #define temperature_limit 50 // temperature limit to start the alert message
 
+#define LORA_RX_PIN 8 // defines digital pin 8 as LoRa RX pin
+#define LORA_TX_PIN 9 // defines digital pin 9 as LoRa TX pin
+
+SoftwareSerial loraSerial(LORA_RX_PIN, LORA_TX_PIN); // (rx, tx)
+
 String comdata = "";
+char msg[50];
 
 dht dht11; // create a object from DHT sensors library
 
@@ -22,8 +29,9 @@ void printToLcd(int temp, int humid);
 void setup() {
   pinMode(led_alert, OUTPUT); // LED pin defined as output
 
-  Serial.begin(9600); // starts serail communication with 9600 of baud rate 
-
+  Serial.begin(9600); // starts serial communication with 9600 of baud rate 
+  loraSerial.begin(9600); // starts lora serial communication with 9600 of baud rate
+  
   lcd.begin(16,2); // starts the LCD as 16 columns and 2 rows
 }
 
@@ -33,9 +41,15 @@ void loop() {
   humidity = dht11.humidity; // receives the humidity value
   
   // print to serial monitor
-  Serial.print("Temperatura:    ");
+  /*Serial.print("{\"temp\":\"");
   Serial.print(temperature);
-  Serial.println(" °C");
+  Serial.print(" °C\", \"humi\": \"");
+  Serial.print(humidity);
+  Serial.println(" %\"}");*/
+
+  sprintf(msg, "{\"temp\": \"%d °C\", \"humi\": \"%d %%\"}\n", temperature, humidity);
+  Serial.print(msg);
+  loraSerial.print(msg);
 
   // turns on the alert if the temperature is above the limit
   if(temperature> temperature_limit){
