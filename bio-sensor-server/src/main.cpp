@@ -4,9 +4,6 @@
 #include <AsyncTCP.h> 
 #include <ESPAsyncWebServer.h> 
 
-#define RX2 16
-#define TX2 17
-
 const char* ssid = "ESP32"; 
 const char* password = "";
 
@@ -14,8 +11,6 @@ AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
 String comdata = "";
-String message = "";
-String msg = "";
 
 String index_html = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -34,13 +29,13 @@ String index_html = R"rawliteral(
 <body>
   <h1>BIO SENSOR</h1>
   <p>
-    <strong>Temperatura</strong> 
-    <span id="temperature">%TEMP%</span>
+    <span>🌡Temperatura</span> 
+    <strong id="temperature"></strong>
   </p>
   
   <p>
-    <strong>Umidade</strong>
-    <span id="humidity">%HUMI%</span>
+    <span>💧Umidade</span>
+    <strong id="humidity"></strong>
   </p>
 </body>
 
@@ -75,9 +70,7 @@ String index_html = R"rawliteral(
 
 
 void notifyClients() {
-  //String json = "{\"message\": \"" + message + "\"}";
-  //String json = "{\"temp\": \"30\", \"humi\": \"70\"}";
-  ws.textAll(msg);
+  ws.textAll(comdata);
 }
 
 void setup() { 
@@ -105,25 +98,9 @@ void setup() {
 } 
 
 void loop() {
-  if(comdata != ""){
-    //message = comdata;
-    //message.trim();
-    notifyClients();
-  }
   if(Serial2.available()) {
-    msg = Serial2.readStringUntil('\n');
-    Serial.println(msg);
+    comdata = Serial2.readStringUntil('\n');
+    Serial.println(comdata);
     notifyClients();
   }
-  comdata = "";
 }
-
-/*void serialEvent()
-{
-  comdata = "";
-  while (Serial.available())
-  {
-    comdata += char(Serial.read());
-    delay(2);
-  }
-}*/
