@@ -37,6 +37,10 @@ String index_html = R"rawliteral(
     <span>💧Umidade</span>
     <strong id="humidity"></strong>
   </p>
+
+  <div id="alert">
+    <h2>🔥ALERTA DE INCÊNDIO🔥</h2>
+  </div>
 </body>
 
 <script>
@@ -59,6 +63,11 @@ String index_html = R"rawliteral(
     websocket.onmessage = (event) => {
       console.log("Dados recebidos: ", event.data);
       let data = JSON.parse(event.data);
+      if(data.alert == 0){
+        document.getElementById('alert').hidden = true;
+      } else{
+        document.getElementById('alert').hidden = false;
+      }
       document.getElementById('temperature').innerHTML = data.temp;
       document.getElementById('humidity').innerHTML = data.humi;
     }
