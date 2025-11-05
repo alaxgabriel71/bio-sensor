@@ -55,7 +55,7 @@ void loop() {
   humidity = dht11.humidity; // receives the humidity value
   
   if(digitalRead(flame_sensor) == 0){
-    flame_alert = 1;
+    flame_alert = 1; 
     delay(1000);
   } else {
     flame_alert = 0;
@@ -74,7 +74,7 @@ void loop() {
     digitalWrite(led_alert, LOW);
   }
 
-  sprintf(msg, "{\"temp\": \"%d °C\", \"humi\": \"%d %%\", \"alert\": \"%d\"}\n", temperature, humidity, flame_alert);
+  sprintf(msg, "{\"temp\": \"%d\", \"humi\": \"%d\", \"alert\": \"%d\"}\n", temperature, humidity, flame_alert);
   Serial.print(msg);
   loraSerial.print(msg);
 
